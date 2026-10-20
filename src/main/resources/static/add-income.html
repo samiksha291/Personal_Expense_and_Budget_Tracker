@@ -60,49 +60,7 @@
     </div>
 </div>
 
-<script>
-    // Set default date to today
-    document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
-
-    document.getElementById('incomeForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const source = document.getElementById('source').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const incomeDate = document.getElementById('incomeDate').value;
-        const description = document.getElementById('description').value;
-
-        const payload = {
-            source: source,
-            amount: amount,
-            incomeDate: incomeDate,
-            description: description
-        };
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-
-        fetch('/api/income', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = 'income-success.html';
-            } else {
-                alert('Failed to add income. Please try again.');
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error adding income:', err);
-            alert('An error occurred while adding income.');
-            submitBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/income.js"></script>
 
 </body>
 </html>

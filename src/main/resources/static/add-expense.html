@@ -65,49 +65,7 @@
     </div>
 </div>
 
-<script>
-    // Set default date to today
-    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
-
-    document.getElementById('expenseForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const categoryId = parseInt(document.getElementById('categoryId').value, 10);
-        const amount = parseFloat(document.getElementById('amount').value);
-        const expenseDate = document.getElementById('expenseDate').value;
-        const description = document.getElementById('description').value;
-
-        const payload = {
-            categoryId: categoryId,
-            amount: amount,
-            expenseDate: expenseDate,
-            description: description
-        };
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-
-        fetch('/api/expenses', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = 'expense-success.html';
-            } else {
-                alert('Failed to add expense. Please try again.');
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error adding expense:', err);
-            alert('An error occurred while adding expense.');
-            submitBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/expense.js"></script>
 
 </body>
 </html>

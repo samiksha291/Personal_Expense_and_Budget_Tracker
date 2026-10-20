@@ -48,44 +48,7 @@
     </a>
 </div>
 
-<script>
-    document.getElementById('savingsGoalForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const goalName = document.getElementById('goalName').value;
-        const targetAmount = parseFloat(document.getElementById('targetAmount').value);
-        const currentAmount = parseFloat(document.getElementById('currentAmount').value);
-
-        const payload = {
-            goalName: goalName,
-            targetAmount: targetAmount,
-            currentAmount: currentAmount
-        };
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-
-        fetch('/api/savings-goals', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = 'savings-goal-view.html';
-            } else {
-                alert('Failed to save savings goal. Please try again.');
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error saving savings goal:', err);
-            alert('An error occurred while saving savings goal.');
-            submitBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/savings-goal.js"></script>
 
 </body>
 </html>

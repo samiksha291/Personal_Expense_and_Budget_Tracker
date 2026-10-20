@@ -73,78 +73,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const expenseId = urlParams.get('expenseId');
-
-        if (!expenseId) {
-            alert('No expense specified to edit.');
-            window.location.href = 'expense-history.html';
-            return;
-        }
-
-        document.getElementById('expenseId').value = expenseId;
-
-        // Load existing expense details
-        fetch(`/api/expenses/${expenseId}`)
-            .then(res => {
-                if (!res.ok) throw new Error('Expense not found');
-                return res.json();
-            })
-            .then(exp => {
-                document.getElementById('categoryId').value = exp.categoryId;
-                document.getElementById('amount').value = exp.amount;
-                document.getElementById('expenseDate').value = exp.expenseDate;
-                document.getElementById('description').value = exp.description || '';
-            })
-            .catch(err => {
-                console.error('Error fetching expense:', err);
-                alert('Expense not found.');
-                window.location.href = 'expense-history.html';
-            });
-    });
-
-    document.getElementById('editExpenseForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const expenseId = document.getElementById('expenseId').value;
-        const categoryId = parseInt(document.getElementById('categoryId').value, 10);
-        const amount = parseFloat(document.getElementById('amount').value);
-        const expenseDate = document.getElementById('expenseDate').value;
-        const description = document.getElementById('description').value;
-
-        const payload = {
-            categoryId: categoryId,
-            amount: amount,
-            expenseDate: expenseDate,
-            description: description
-        };
-
-        const updateBtn = document.getElementById('updateBtn');
-        updateBtn.disabled = true;
-
-        fetch(`/api/expenses/${expenseId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = 'expense-history.html';
-            } else {
-                alert('Failed to update expense. Please try again.');
-                updateBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error updating expense:', err);
-            alert('An error occurred while updating expense.');
-            updateBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/expense.js"></script>
 
 </body>
 </html>

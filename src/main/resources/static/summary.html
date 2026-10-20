@@ -55,21 +55,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        fetch('/api/dashboard/monthly-summary')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('summaryIncome').innerHTML = '&#8377;' + Number(data.totalIncome).toFixed(2);
-                document.getElementById('summaryExpenses').innerHTML = '&#8377;' + Number(data.totalExpenses).toFixed(2);
-                document.getElementById('summaryCategory').innerText = data.highestCategory || 'None';
-                document.getElementById('summaryRemaining').innerHTML = '&#8377;' + Number(data.remaining).toFixed(2);
-            })
-            .catch(err => {
-                console.error('Error fetching monthly summary:', err);
-            });
-    });
-</script>
+<script src="js/summary.js"></script>
 
 </body>
 </html>

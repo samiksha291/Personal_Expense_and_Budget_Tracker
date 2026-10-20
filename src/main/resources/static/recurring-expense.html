@@ -74,53 +74,7 @@
     </a>
 </div>
 
-<script>
-    // Set default date to today
-    document.getElementById('nextDueDate').value = new Date().toISOString().split('T')[0];
-
-    document.getElementById('recurringForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const expenseName = document.getElementById('expenseName').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const categoryId = parseInt(document.getElementById('categoryId').value, 10);
-        const frequency = document.getElementById('frequency').value;
-        const nextDueDate = document.getElementById('nextDueDate').value;
-        const description = document.getElementById('description').value;
-
-        const payload = {
-            expenseName: expenseName,
-            amount: amount,
-            categoryId: categoryId,
-            frequency: frequency,
-            nextDueDate: nextDueDate,
-            description: description
-        };
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-
-        fetch('/api/recurring-expenses', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = 'recurring-expense-view.html';
-            } else {
-                alert('Failed to save recurring expense. Please try again.');
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error saving recurring expense:', err);
-            alert('An error occurred while saving recurring expense.');
-            submitBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/recurring-expense.js"></script>
 
 </body>
 </html>

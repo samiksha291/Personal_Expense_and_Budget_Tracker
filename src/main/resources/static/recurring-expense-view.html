@@ -115,39 +115,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        fetch('/api/recurring-expenses')
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById('recurringTableBody');
-                tbody.innerHTML = '';
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="no-data">No recurring expenses found.</td></tr>';
-                    return;
-                }
-
-                data.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${item.expenseName || '-'}</td>
-                        <td>&#8377;${Number(item.amount).toFixed(2)}</td>
-                        <td>${item.categoryName || (item.category ? item.category.categoryName : '-')}</td>
-                        <td>${item.frequency || '-'}</td>
-                        <td>${item.nextDueDate || '-'}</td>
-                        <td>${item.description || '-'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            })
-            .catch(err => {
-                console.error('Error loading recurring expenses:', err);
-                document.getElementById('recurringTableBody').innerHTML = 
-                    '<tr><td colspan="6" class="no-data" style="color:red;">Failed to load recurring expenses.</td></tr>';
-            });
-    });
-</script>
+<script src="js/recurring-expense.js"></script>
 
 </body>
 </html>

@@ -57,38 +57,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        fetch('/api/transactions')
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById('transactionTableBody');
-                tbody.innerHTML = '';
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #64748b;">No transactions recorded.</td></tr>';
-                    return;
-                }
-
-                data.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${item.transactionDate || '-'}</td>
-                        <td><strong>${item.type}</strong></td>
-                        <td>${item.category || '-'}</td>
-                        <td>${item.description || '-'}</td>
-                        <td>&#8377;${Number(item.amount).toFixed(2)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            })
-            .catch(err => {
-                console.error('Error loading transactions:', err);
-                document.getElementById('transactionTableBody').innerHTML = 
-                    '<tr><td colspan="5" style="text-align:center; color: red;">Failed to load transactions.</td></tr>';
-            });
-    });
-</script>
+<script src="js/transactions.js"></script>
 
 </body>
 </html>

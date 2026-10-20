@@ -49,49 +49,7 @@
     </a>
 </div>
 
-<script>
-    // Set current month & year by default
-    const now = new Date();
-    document.getElementById('month').value = now.getMonth() + 1;
-    document.getElementById('year').value = now.getFullYear();
-
-    document.getElementById('budgetForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const month = parseInt(document.getElementById('month').value, 10);
-        const year = parseInt(document.getElementById('year').value, 10);
-        const amount = parseFloat(document.getElementById('amount').value);
-
-        const payload = {
-            month: month,
-            year: year,
-            amount: amount
-        };
-
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-
-        fetch('/api/budget', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (res.ok) {
-                window.location.href = `budget-view.html?month=${month}&year=${year}`;
-            } else {
-                alert('Failed to save budget. Please try again.');
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(err => {
-            console.error('Error saving budget:', err);
-            alert('An error occurred while saving budget.');
-            submitBtn.disabled = false;
-        });
-    });
-</script>
+<script src="js/budget.js"></script>
 
 </body>
 </html>

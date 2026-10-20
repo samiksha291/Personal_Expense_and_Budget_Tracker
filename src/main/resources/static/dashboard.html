@@ -227,36 +227,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Fetch dashboard summary data
-        fetch('/api/dashboard/summary')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('totalIncome').innerHTML = '&#8377;' + Number(data.totalIncome).toFixed(2);
-                document.getElementById('totalExpenses').innerHTML = '&#8377;' + Number(data.totalExpenses).toFixed(2);
-                document.getElementById('remaining').innerHTML = '&#8377;' + Number(data.remaining).toFixed(2);
-            })
-            .catch(err => console.error('Error fetching dashboard summary:', err));
-
-        // Fetch latest savings goal
-        fetch('/api/savings-goals/latest')
-            .then(res => {
-                if (res.status === 204 || !res.ok) return null;
-                return res.json();
-            })
-            .then(goal => {
-                if (goal && goal.goalName) {
-                    document.getElementById('goalTitle').innerText = '🎯 ' + goal.goalName;
-                    const percent = goal.progress != null ? Number(goal.progress).toFixed(1) : 0;
-                    document.getElementById('progressBar').style.width = percent + '%';
-                    document.getElementById('progressText').innerHTML = 
-                        '&#8377;' + Number(goal.currentAmount).toFixed(2) + ' saved of &#8377;' + Number(goal.targetAmount).toFixed(2) + ' (' + percent + '% completed)';
-                }
-            })
-            .catch(err => console.error('Error fetching savings goal:', err));
-    });
-</script>
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>

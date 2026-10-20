@@ -116,32 +116,7 @@
 
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const now = new Date();
-        const month = urlParams.get('month') || (now.getMonth() + 1);
-        const year = urlParams.get('year') || now.getFullYear();
-
-        document.getElementById('budgetHeaderTitle').innerText = `Budget for ${month}/${year}`;
-
-        fetch(`/api/budget?month=${month}&year=${year}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('budgetAmount').innerHTML = '&#8377;' + Number(data.budget).toFixed(2);
-                document.getElementById('spentAmount').innerHTML = '&#8377;' + Number(data.totalExpenses).toFixed(2);
-                
-                const remElem = document.getElementById('remainingAmount');
-                remElem.innerHTML = '&#8377;' + Number(data.remaining).toFixed(2);
-                if (data.remaining < 0) {
-                    remElem.className = 'budget-amount spent';
-                } else {
-                    remElem.className = 'budget-amount remaining';
-                }
-            })
-            .catch(err => console.error('Error fetching budget summary:', err));
-    });
-</script>
+<script src="js/budget.js"></script>
 
 </body>
 </html>
