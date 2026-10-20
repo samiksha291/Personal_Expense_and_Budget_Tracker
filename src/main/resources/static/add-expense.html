@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Expense</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="header">
+    <h1>💰 Personal Expense Manager</h1>
+    <p>Record your expenses and keep track of your spending.</p>
+</div>
+
+<div class="container">
+    <div class="form-card">
+        <h1>💸 Add Expense</h1>
+
+        <form id="expenseForm">
+            <label for="categoryId">Category</label>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">Select Category</option>
+                <option value="1">Food</option>
+                <option value="2">Travel</option>
+                <option value="3">Shopping</option>
+                <option value="4">Bills</option>
+                <option value="5">Entertainment</option>
+                <option value="6">Healthcare</option>
+                <option value="7">Education</option>
+                <option value="8">Other</option>
+            </select>
+
+            <label for="amount">Amount</label>
+            <input type="number"
+                   id="amount"
+                   name="amount"
+                   step="0.01"
+                   min="0"
+                   placeholder="Enter amount"
+                   required>
+
+            <label for="expenseDate">Date</label>
+            <input type="date"
+                   id="expenseDate"
+                   name="expenseDate"
+                   required>
+
+            <label for="description">Description</label>
+            <input type="text"
+                   id="description"
+                   name="description"
+                   placeholder="Optional description"
+                   maxlength="255">
+
+            <button type="submit" id="submitBtn">
+                Add Expense
+            </button>
+        </form>
+
+        <a class="back" href="dashboard.html">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+    // Set default date to today
+    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('expenseForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const categoryId = parseInt(document.getElementById('categoryId').value, 10);
+        const amount = parseFloat(document.getElementById('amount').value);
+        const expenseDate = document.getElementById('expenseDate').value;
+        const description = document.getElementById('description').value;
+
+        const payload = {
+            categoryId: categoryId,
+            amount: amount,
+            expenseDate: expenseDate,
+            description: description
+        };
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+
+        fetch('/api/expenses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (res.ok) {
+                window.location.href = 'expense-success.html';
+            } else {
+                alert('Failed to add expense. Please try again.');
+                submitBtn.disabled = false;
+            }
+        })
+        .catch(err => {
+            console.error('Error adding expense:', err);
+            alert('An error occurred while adding expense.');
+            submitBtn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Savings Goal</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .savings-container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .savings-title {
+            margin-bottom: 25px;
+        }
+
+        .savings-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .savings-title p {
+            color: #64748b;
+        }
+
+        .savings-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .savings-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+            border-top: 4px solid #2563eb;
+        }
+
+        .savings-card h3 {
+            color: #64748b;
+            margin-top: 0;
+        }
+
+        .savings-amount {
+            font-size: 25px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .progress-section {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 22px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #2563eb;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .savings-actions {
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .savings-actions form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .savings-actions button {
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .savings-actions button:hover {
+            background: #1d4ed8;
+        }
+
+        .savings-actions a {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .no-goal {
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🎯 Savings Goal</h1>
+    <p>Track your savings progress toward your goal.</p>
+</div>
+
+<div class="savings-container">
+
+    <div id="goalSection" style="display: none;">
+
+        <div class="savings-title">
+            <h1 id="goalNameDisplay">🎯 Savings Goal</h1>
+            <p>Here is your current savings progress.</p>
+        </div>
+
+        <div class="savings-cards">
+            <div class="savings-card">
+                <h3>🎯 Target Amount</h3>
+                <p class="savings-amount" id="targetAmountDisplay">
+                    &#8377;0.00
+                </p>
+            </div>
+
+            <div class="savings-card">
+                <h3>💰 Current Savings</h3>
+                <p class="savings-amount" id="currentAmountDisplay">
+                    &#8377;0.00
+                </p>
+            </div>
+
+            <div class="savings-card">
+                <h3>📊 Remaining</h3>
+                <p class="savings-amount" id="remainingAmountDisplay">
+                    &#8377;0.00
+                </p>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <h3>📈 Savings Progress</h3>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-text" id="progressText">
+                0.00% completed
+            </p>
+        </div>
+
+        <div class="savings-actions">
+            <form id="updateGoalForm">
+                <input type="hidden" id="goalId" name="goalId">
+                <input type="hidden" id="goalName" name="goalName">
+
+                <label for="updateTargetAmount">Target Amount</label>
+                <input type="number"
+                       id="updateTargetAmount"
+                       name="targetAmount"
+                       step="0.01"
+                       min="0"
+                       required>
+
+                <label for="updateCurrentAmount">Current Savings</label>
+                <input type="number"
+                       id="updateCurrentAmount"
+                       name="currentAmount"
+                       step="0.01"
+                       min="0"
+                       required>
+
+                <button type="submit" id="updateBtn">
+                    ✏️ Update Goal
+                </button>
+            </form>
+
+            <a href="dashboard.html">← Back to Dashboard</a>
+        </div>
+
+    </div>
+
+    <div id="noGoalSection" class="no-goal" style="display: none;">
+        <h2>🎯 No Savings Goal Found</h2>
+        <p>You have not created a savings goal yet.</p>
+        <a href="savings-goal.html" class="back">
+            Create Savings Goal
+        </a>
+        <br><br>
+        <a href="dashboard.html" style="color: #2563eb; text-decoration: none;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function loadSavingsGoal() {
+        fetch('/api/savings-goals/latest')
+            .then(res => {
+                if (res.status === 204 || !res.ok) {
+                    return null;
+                }
+                return res.json();
+            })
+            .then(goal => {
+                const goalSec = document.getElementById('goalSection');
+                const noGoalSec = document.getElementById('noGoalSection');
+
+                if (goal && goal.goalName) {
+                    goalSec.style.display = 'block';
+                    noGoalSec.style.display = 'none';
+
+                    document.getElementById('goalId').value = goal.goalId;
+                    document.getElementById('goalName').value = goal.goalName;
+                    document.getElementById('goalNameDisplay').innerText = '🎯 ' + goal.goalName;
+                    document.getElementById('targetAmountDisplay').innerHTML = '&#8377;' + Number(goal.targetAmount).toFixed(2);
+                    document.getElementById('currentAmountDisplay').innerHTML = '&#8377;' + Number(goal.currentAmount).toFixed(2);
+                    document.getElementById('remainingAmountDisplay').innerHTML = '&#8377;' + Number(goal.remaining).toFixed(2);
+
+                    const progress = Number(goal.progress).toFixed(2);
+                    document.getElementById('progressBar').style.width = progress + '%';
+                    document.getElementById('progressText').innerText = progress + '% completed';
+
+                    document.getElementById('updateTargetAmount').value = goal.targetAmount;
+                    document.getElementById('updateCurrentAmount').value = goal.currentAmount;
+                } else {
+                    goalSec.style.display = 'none';
+                    noGoalSec.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching savings goal:', err);
+                document.getElementById('noGoalSection').style.display = 'block';
+            });
+    }
+
+    document.getElementById('updateGoalForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const goalId = parseInt(document.getElementById('goalId').value, 10);
+        const goalName = document.getElementById('goalName').value;
+        const targetAmount = parseFloat(document.getElementById('updateTargetAmount').value);
+        const currentAmount = parseFloat(document.getElementById('updateCurrentAmount').value);
+
+        const payload = {
+            goalId: goalId,
+            goalName: goalName,
+            targetAmount: targetAmount,
+            currentAmount: currentAmount
+        };
+
+        const updateBtn = document.getElementById('updateBtn');
+        updateBtn.disabled = true;
+
+        fetch('/api/savings-goals', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (res.ok) {
+                loadSavingsGoal();
+            } else {
+                alert('Failed to update savings goal.');
+            }
+            updateBtn.disabled = false;
+        })
+        .catch(err => {
+            console.error('Error updating savings goal:', err);
+            alert('An error occurred while updating savings goal.');
+            updateBtn.disabled = false;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSavingsGoal();
+    });
+</script>
+
+</body>
+</html>

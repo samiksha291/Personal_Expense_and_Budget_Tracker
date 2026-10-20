@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recurring Expenses</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .recurring-container {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .recurring-title {
+            margin-bottom: 25px;
+        }
+
+        .recurring-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .recurring-title p {
+            color: #64748b;
+        }
+
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+            overflow-x: auto;
+        }
+
+        .table-card table {
+            min-width: 850px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-card th, .table-card td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-card th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .recurring-actions {
+            margin-top: 30px;
+        }
+
+        .recurring-actions a {
+            display: inline-block;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🔄 Recurring Expenses</h1>
+    <p>Manage your regularly occurring expenses.</p>
+</div>
+
+<div class="recurring-container">
+
+    <div class="recurring-title">
+        <h1>🔄 Your Recurring Expenses</h1>
+        <p>All your saved recurring expenses are shown below.</p>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+            <tr>
+                <th>Expense Name</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Frequency</th>
+                <th>Next Due Date</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody id="recurringTableBody">
+            <tr>
+                <td colspan="6" class="no-data">Loading recurring expenses...</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="recurring-actions">
+        <a href="recurring-expense.html">
+            ➕ Add Recurring Expense
+        </a>
+        <a href="dashboard.html">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/recurring-expenses')
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('recurringTableBody');
+                tbody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="no-data">No recurring expenses found.</td></tr>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.expenseName || '-'}</td>
+                        <td>&#8377;${Number(item.amount).toFixed(2)}</td>
+                        <td>${item.categoryName || (item.category ? item.category.categoryName : '-')}</td>
+                        <td>${item.frequency || '-'}</td>
+                        <td>${item.nextDueDate || '-'}</td>
+                        <td>${item.description || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading recurring expenses:', err);
+                document.getElementById('recurringTableBody').innerHTML = 
+                    '<tr><td colspan="6" class="no-data" style="color:red;">Failed to load recurring expenses.</td></tr>';
+            });
+    });
+</script>
+
+</body>
+</html>

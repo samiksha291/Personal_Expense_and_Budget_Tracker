@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recurring Expense</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="form-card">
+    <h1>Add Recurring Expense</h1>
+
+    <form id="recurringForm">
+        <label for="expenseName">Expense Name</label>
+        <input type="text"
+               id="expenseName"
+               name="expenseName"
+               placeholder="e.g. Netflix Subscription"
+               required>
+
+        <label for="amount">Amount</label>
+        <input type="number"
+               id="amount"
+               name="amount"
+               step="0.01"
+               min="0"
+               placeholder="Enter expense amount"
+               required>
+
+        <label for="categoryId">Category</label>
+        <select id="categoryId" name="categoryId" required>
+            <option value="">Select Category</option>
+            <option value="1">Food</option>
+            <option value="2">Travel</option>
+            <option value="3">Shopping</option>
+            <option value="4">Bills</option>
+            <option value="5">Entertainment</option>
+            <option value="6">Healthcare</option>
+            <option value="7">Education</option>
+            <option value="8">Other</option>
+        </select>
+
+        <label for="frequency">Frequency</label>
+        <select id="frequency" name="frequency" required>
+            <option value="">Select Frequency</option>
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+        </select>
+
+        <label for="nextDueDate">Next Due Date</label>
+        <input type="date"
+               id="nextDueDate"
+               name="nextDueDate"
+               required>
+
+        <label for="description">Description</label>
+        <input type="text"
+               id="description"
+               name="description"
+               placeholder="Optional description"
+               maxlength="255">
+
+        <button type="submit" id="submitBtn">
+            Save Recurring Expense
+        </button>
+    </form>
+
+    <a href="dashboard.html" class="back">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<script>
+    // Set default date to today
+    document.getElementById('nextDueDate').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('recurringForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const expenseName = document.getElementById('expenseName').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const categoryId = parseInt(document.getElementById('categoryId').value, 10);
+        const frequency = document.getElementById('frequency').value;
+        const nextDueDate = document.getElementById('nextDueDate').value;
+        const description = document.getElementById('description').value;
+
+        const payload = {
+            expenseName: expenseName,
+            amount: amount,
+            categoryId: categoryId,
+            frequency: frequency,
+            nextDueDate: nextDueDate,
+            description: description
+        };
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+
+        fetch('/api/recurring-expenses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (res.ok) {
+                window.location.href = 'recurring-expense-view.html';
+            } else {
+                alert('Failed to save recurring expense. Please try again.');
+                submitBtn.disabled = false;
+            }
+        })
+        .catch(err => {
+            console.error('Error saving recurring expense:', err);
+            alert('An error occurred while saving recurring expense.');
+            submitBtn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Summary</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/summary.css">
+</head>
+
+<body>
+
+<div class="summary-page">
+
+    <div class="summary-header">
+        <h1>Monthly Summary</h1>
+    </div>
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <h2>Total Income</h2>
+            <p class="summary-value" id="summaryIncome">
+                &#8377;0.00
+            </p>
+        </div>
+
+        <div class="summary-card">
+            <h2>Total Expenses</h2>
+            <p class="summary-value" id="summaryExpenses">
+                &#8377;0.00
+            </p>
+        </div>
+
+        <div class="summary-card">
+            <h2>Highest Expense Category</h2>
+            <p class="summary-value" id="summaryCategory">
+                -
+            </p>
+        </div>
+
+        <div class="summary-card">
+            <h2>Remaining</h2>
+            <p class="summary-value" id="summaryRemaining">
+                &#8377;0.00
+            </p>
+        </div>
+
+    </div>
+
+    <div class="summary-actions">
+        <a href="transactions.html">Transaction History</a>
+        <a href="dashboard.html">Back to Dashboard</a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/dashboard/monthly-summary')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('summaryIncome').innerHTML = '&#8377;' + Number(data.totalIncome).toFixed(2);
+                document.getElementById('summaryExpenses').innerHTML = '&#8377;' + Number(data.totalExpenses).toFixed(2);
+                document.getElementById('summaryCategory').innerText = data.highestCategory || 'None';
+                document.getElementById('summaryRemaining').innerHTML = '&#8377;' + Number(data.remaining).toFixed(2);
+            })
+            .catch(err => {
+                console.error('Error fetching monthly summary:', err);
+            });
+    });
+</script>
+
+</body>
+</html>

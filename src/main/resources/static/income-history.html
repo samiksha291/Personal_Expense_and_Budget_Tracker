@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Income History</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/income-history.css">
+</head>
+
+<body>
+
+<div class="income-page">
+
+    <div class="income-header">
+        <h1>Income History</h1>
+    </div>
+
+    <!-- Search / Filter -->
+    <div class="filter-card">
+        <h2>Search / Filter Income</h2>
+
+        <form id="filterForm">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Source</label>
+                    <input type="text" id="source" name="source" placeholder="Salary, Freelance">
+                </div>
+
+                <div class="filter-group">
+                    <label>Date</label>
+                    <input type="date" id="incomeDate" name="incomeDate">
+                </div>
+
+                <div class="filter-group">
+                    <label>Amount</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0">
+                </div>
+
+                <button type="submit" class="filter-button">
+                    Search
+                </button>
+
+                <a href="income-history.html" class="clear-button" id="clearBtn">
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Income Table -->
+    <div class="table-card">
+        <table class="income-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Source</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="incomeTableBody">
+                <tr>
+                    <td colspan="5" style="text-align: center;">Loading income...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="income-actions">
+        <a href="add-income.html">
+            + Add Income
+        </a>
+        <a href="expense-history.html">
+            Expense History
+        </a>
+        <a href="dashboard.html">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function loadIncome(params = {}) {
+        const query = new URLSearchParams();
+        if (params.source) query.append('source', params.source);
+        if (params.incomeDate) query.append('incomeDate', params.incomeDate);
+        if (params.amount) query.append('amount', params.amount);
+
+        const url = '/api/income' + (query.toString() ? '?' + query.toString() : '');
+
+        fetch(url)
+            .then(res => res.json())
+            .then(incomes => {
+                const tbody = document.getElementById('incomeTableBody');
+                tbody.innerHTML = '';
+
+                if (!incomes || incomes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #64748b;">No income records found.</td></tr>';
+                    return;
+                }
+
+                incomes.forEach(inc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${inc.incomeDate || '-'}</td>
+                        <td>${inc.source || '-'}</td>
+                        <td>${inc.description || '-'}</td>
+                        <td>&#8377;${Number(inc.amount).toFixed(2)}</td>
+                        <td>
+                            <button type="button" class="delete-button" onclick="deleteIncome(${inc.incomeId})">
+                                Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading income:', err);
+                document.getElementById('incomeTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Failed to load income.</td></tr>';
+            });
+    }
+
+    function deleteIncome(incomeId) {
+        if (!confirm('Are you sure you want to delete this income record?')) return;
+
+        fetch(`/api/income/${incomeId}`, {
+            method: 'DELETE'
+        })
+        .then(res => {
+            if (res.ok) {
+                triggerFilter();
+            } else {
+                alert('Failed to delete income record.');
+            }
+        })
+        .catch(err => {
+            console.error('Error deleting income:', err);
+            alert('An error occurred while deleting income.');
+        });
+    }
+
+    function triggerFilter() {
+        const source = document.getElementById('source').value;
+        const incomeDate = document.getElementById('incomeDate').value;
+        const amount = document.getElementById('amount').value;
+
+        loadIncome({ source, incomeDate, amount });
+    }
+
+    document.getElementById('filterForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        triggerFilter();
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('source').value = '';
+        document.getElementById('incomeDate').value = '';
+        document.getElementById('amount').value = '';
+        loadIncome();
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadIncome();
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Budget</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .budget-container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .budget-title {
+            margin-bottom: 25px;
+        }
+
+        .budget-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .budget-title p {
+            color: #64748b;
+        }
+
+        .budget-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .budget-card {
+            flex: 1;
+            min-width: 220px;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+            border-top: 4px solid #2563eb;
+        }
+
+        .budget-card h3 {
+            color: #64748b;
+            margin-top: 0;
+        }
+
+        .budget-amount {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .spent {
+            color: #dc2626;
+        }
+
+        .remaining {
+            color: #16a34a;
+        }
+
+        .budget-actions {
+            margin-top: 30px;
+        }
+
+        .budget-actions a {
+            display: inline-block;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>💳 Monthly Budget</h1>
+    <p>Track your monthly budget and spending.</p>
+</div>
+
+<div class="budget-container">
+
+    <div class="budget-title">
+        <h1 id="budgetHeaderTitle">Budget for ...</h1>
+        <p>Here is your current monthly budget summary.</p>
+    </div>
+
+    <div class="budget-cards">
+        <div class="budget-card">
+            <h3>💳 Monthly Budget</h3>
+            <p class="budget-amount" id="budgetAmount">
+                &#8377;0.00
+            </p>
+        </div>
+
+        <div class="budget-card">
+            <h3>💸 Total Spent</h3>
+            <p class="budget-amount spent" id="spentAmount">
+                &#8377;0.00
+            </p>
+        </div>
+
+        <div class="budget-card">
+            <h3>💰 Remaining</h3>
+            <p class="budget-amount remaining" id="remainingAmount">
+                &#8377;0.00
+            </p>
+        </div>
+    </div>
+
+    <div class="budget-actions">
+        <a href="budget.html">✏️ Update Budget</a>
+        <a href="dashboard.html">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const now = new Date();
+        const month = urlParams.get('month') || (now.getMonth() + 1);
+        const year = urlParams.get('year') || now.getFullYear();
+
+        document.getElementById('budgetHeaderTitle').innerText = `Budget for ${month}/${year}`;
+
+        fetch(`/api/budget?month=${month}&year=${year}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('budgetAmount').innerHTML = '&#8377;' + Number(data.budget).toFixed(2);
+                document.getElementById('spentAmount').innerHTML = '&#8377;' + Number(data.totalExpenses).toFixed(2);
+                
+                const remElem = document.getElementById('remainingAmount');
+                remElem.innerHTML = '&#8377;' + Number(data.remaining).toFixed(2);
+                if (data.remaining < 0) {
+                    remElem.className = 'budget-amount spent';
+                } else {
+                    remElem.className = 'budget-amount remaining';
+                }
+            })
+            .catch(err => console.error('Error fetching budget summary:', err));
+    });
+</script>
+
+</body>
+</html>
